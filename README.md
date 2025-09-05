@@ -18,4 +18,9 @@ Required pip pre-installed.
 pip install poetry
 poetry shell
 poetry install
+git clone https://github.com/chjwon/LLM_EVAL
 ```
+
+## Experiments
+
+Table 3
