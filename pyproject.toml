@@ -1,0 +1,47 @@
+[tool.poetry]
+name = "memeinterpret"
+version = "0.1.0"
+description = ""
+authors = ["Khoi Nguyen <npnkhoi@gmail.com>"]
+readme = "README.md"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.11"
+label-studio-sdk = "^1.0.5"
+spacy = "^3.8.2"
+wandb = "^0.18.5"
+torch = {version = "^2.5.0+cu118", source = "pytorch-gpu-src"}
+torchvision = {version = "^0.20.0+cu118", source = "pytorch-gpu-src"}
+torchaudio = {version = "^2.5.0+cu118", source = "pytorch-gpu-src"}
+transformers = "^4.46.0"
+accelerate = "^1.0.1"
+bitsandbytes = "^0.44.1"
+pytest = "^8.3.3"
+typing-extensions = "^4.12.2"
+bert-score = "^0.3.13"
+selfcheckgpt = "^0.1.7"
+openai = "^1.56.1"
+sentence-transformers = "^3.3.1"
+evaluate = "^0.4.3"
+sentencepiece = "^0.2.0"
+openpyxl = "^3.1.5"
+absl-py = "^2.1.0"
+rouge-score = "^0.1.2"
+peft = "^0.14.0"
+numpy = "2.0.0"
+ipywidgets = "^8.1.5"
+
+
+[[tool.poetry.source]]
+name = "pytorch-gpu-src"
+url = "https://download.pytorch.org/whl/cu118"
+priority = "explicit"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
