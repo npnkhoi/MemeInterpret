@@ -3,6 +3,7 @@ Do both inference and evaluation on the test set
 """
 
 import json
+import os
 
 import numpy as np
 from typing import Dict
@@ -10,8 +11,8 @@ from LLM_EVAL.utils import bert_score, bleu_score, rougue_score, selfcheck_nli_s
 from src.utils import Collator, Color, PromptId, get_metric_names
 # TODO: update the explain train and test dataset
 from src.data_fhm import (
-    test_dataset, train_dataset, expl_train_dataset, traindev_dataset,
-    expl_dummy_test_dataset, expl_test_dataset
+    test_dataset, train_dataset, traindev_dataset,
+    expl_test_dataset
 )
 from transformers import (
     LlavaForConditionalGeneration,
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument('--run_name', type=str, default='llava_inference')
     parser.add_argument('--max_new_tokens', type=int, default=100)
     parser.add_argument('--device_map', type=str, default='auto')
-    parser.add_argument('--dataset', choices=['interpret', 'hatred-dummy', 'hatred-main'], default='interpret')
+    parser.add_argument('--dataset', choices=['interpret', 'hatred-main'], default='interpret')
     parser.add_argument('--split', type=str, default='test')
     parser.add_argument('--pilot', action='store_true')
     parser.add_argument('--no_evaluate', action='store_true')
@@ -137,9 +138,7 @@ if __name__ == '__main__':
         dataset = traindev_dataset
     
     elif args.split == 'test':
-        if args.dataset == 'hatred-dummy':
-            dataset = expl_dummy_test_dataset
-        elif args.dataset == 'hatred-main':
+        if args.dataset == 'hatred-main':
             dataset = expl_test_dataset
         else: # 'interpret'
             dataset = test_dataset
@@ -185,6 +184,7 @@ if __name__ == '__main__':
         metrics = get_metric_names(task, 'eval')
     results = evaluate(model, processor, dataloader, metrics, args.max_new_tokens)
 
+    os.makedirs('output', exist_ok=True)
     output_file = f'output/{args.run_name}_{wandb.run.id}.json'
     with open(output_file, 'w') as f:
         json.dump(results, f, indent=4)

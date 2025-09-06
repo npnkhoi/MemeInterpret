@@ -6,8 +6,8 @@ import pandas as pd
 from PIL import Image
 import ast
 
-FHM_ORIG_IMG_DIR = 'fhm_img/original/'
-FHM_NOTEXT_IMG_DIR = 'fhm_img/notext/'
+FHM_ORIG_IMG_DIR = 'data/fhm_img/original/'
+FHM_NOTEXT_IMG_DIR = 'data/fhm_img/notext/'
 
 class FastFHMDataset(Dataset):
     def __init__(self, data_list: list, load_img: bool=False):
@@ -19,22 +19,25 @@ class FastFHMDataset(Dataset):
 
     def __getitem__(self, idx):
         item = self.data_list[idx]
+        item['img_path'] = os.path.join(FHM_ORIG_IMG_DIR, item['img_path'].split('/')[-1])
         # add autobk and autosm
         if self.load_img:
             item['img'] = Image.open(item['img_path']).convert('RGB')
         return item
 
-train_list = json.load(open('data/train_data.json'))
-dev_list = json.load(open('data/dev_data.json'))
-test_list = json.load(open('data/test_data.json'))
+train_list = json.load(open('data/memeinterpret/train_data.json'))
+dev_list = json.load(open('data/memeinterpret/dev_data.json'))
+test_list = json.load(open('data/memeinterpret/test_data.json'))
 
 train_dataset = FastFHMDataset(train_list)
 dev_dataset = FastFHMDataset(dev_list)
 test_dataset = FastFHMDataset(test_list)
+traindev_dataset = FastFHMDataset(train_list + dev_list)
+devtest_dataset = FastFHMDataset(dev_list + test_list)
 
 ###################### explanation ######################
-hatred_train_fn = "../literature/hatred/fhm_train_reasonings.jsonl"
-hatred_test_fn = "../literature/hatred/fhm_test_reasonings.jsonl"
+hatred_train_fn = "data/hatred/fhm_train_reasonings.jsonl"
+hatred_test_fn = "data/hatred/fhm_test_reasonings.jsonl"
 hatred_test_images = []
 
 # explanation_dict: img_filename -> explanation
@@ -53,7 +56,7 @@ with open(hatred_test_fn, 'r') as f:
         hatred_test_images.append(item['img'])
 
 # use the pre-split images to split the *intersection* between hatred and memeinterpret (train list)
-hatred_splits = json.load(open("data/ARR2412/hatred_split_v2.json"))
+hatred_splits = json.load(open("data/hatred/hatred_split_v2.json"))
 # print(f"size of train+dev (fhm): {len(train_list) + len(dev_list)}")
 hatred_train_list = [
     x for x in train_list + dev_list
